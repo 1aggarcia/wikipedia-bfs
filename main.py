@@ -17,9 +17,9 @@ def main():
     formatted_links = [DOMAIN + ARTICLE_KEY + article for article in articles]
 
     print()
-    print(f"ROUTE (len {len(formatted_links)}):")
+    print(f"PATH (len {len(formatted_links)}):")
     for link in formatted_links:
-        print(link)
+        print(f"- {link}")
 
 
 def get_children_articles(article: str) -> list[str]:
@@ -31,8 +31,7 @@ def get_children_articles(article: str) -> list[str]:
     response = requests.get(url)
     children = set()
 
-    a_tags: element.ResultSet[element.Tag] = \
-        BeautifulSoup(response.content, "html.parser").find_all("a")
+    a_tags = BeautifulSoup(response.content, "html.parser").find_all("a")
 
     for tag in a_tags:
         if (tag.has_attr("href")
@@ -42,9 +41,6 @@ def get_children_articles(article: str) -> list[str]:
 
             # filter out non-article links
             and tag["href"].startswith(ARTICLE_KEY)
-
-            # filter out links to categories and other things
-            and ":" not in tag["href"]
         ):
             # remove "/wiki/" from the article name, then add it to the list
             child = tag["href"].replace(ARTICLE_KEY, "")
